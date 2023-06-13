@@ -43,4 +43,12 @@ Trong giai đoạn này mã máy của một chương trình dịch từ nhiều
 Mã máy của các hàm thư viện gọi trong chương trình cũng được đưa vào chương trình cuối trong giai đoạn này.
 Chính vì vậy mà các lỗi liên quan đến việc gọi hàm hay sử dụng biến tổng thể mà không tồn tại sẽ bị phát hiện. Kể cả lỗi viết chương trình chính không có hàm main() cũng được phát hiện trong liên kết.
     
+<summary>PRAGMA</summary>
+
+The `pragma pack` directive can be used to improve the efficiency of C code by reducing the amount of memory that is used to store structure objects. However, it is important to note that using the `pragma pack` directive can also make the code less portable, as not all compilers support it.
+
+![no-pragma](https://github.com/rhuynh911/EmbeddedT6/assets/13808386/fe897c02-0693-4a02-b7c9-84896c1dfc9b)
+
+![has-pragama](https://github.com/rhuynh911/EmbeddedT6/assets/13808386/0d6ae515-79a2-4b5b-a3b7-0c9806c4486b)
+	
 </details>
