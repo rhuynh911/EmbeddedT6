@@ -42,7 +42,10 @@ Sau khi thực hiện tiền xử lý
 Trong giai đoạn này mã máy của một chương trình dịch từ nhiều nguồn (file .c hoặc file thư viện .lib) được liên kết lại với nhau để tạo thành chương trình đích duy nhất
 Mã máy của các hàm thư viện gọi trong chương trình cũng được đưa vào chương trình cuối trong giai đoạn này.
 Chính vì vậy mà các lỗi liên quan đến việc gọi hàm hay sử dụng biến tổng thể mà không tồn tại sẽ bị phát hiện. Kể cả lỗi viết chương trình chính không có hàm main() cũng được phát hiện trong liên kết.
-    
+
+</details>
+
+<details>
 <summary>PRAGMA</summary>
 
 The `pragma pack` directive can be used to improve the efficiency of C code by reducing the amount of memory that is used to store structure objects. However, it is important to note that using the `pragma pack` directive can also make the code less portable, as not all compilers support it.
