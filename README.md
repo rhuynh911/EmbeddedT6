@@ -236,3 +236,128 @@ int main()
 - Khi nào dùng Union: Union có rất nhiều member và tại 1 thời điểm mình chỉ sử dụng 1 member trong đó thôi thì ta sẽ dùng Union (ví dụ: Khi mua lap, ta sẽ có nhiều hãng để lựa chọn, nhưng ta chỉ có thể chọn 1 hãng để mua).
 
 </details>
+
+<details>
+<summary>PHÂN VÙNG NHỚ</summary>
+	
+<img width="400" alt="image" src="https://i0.wp.com/media.geeksforgeeks.org/wp-content/uploads/memoryLayoutC.jpg?resize=449%2C343&ssl=1">
+
+## Phân vùng Text:
+- Quyền truy cập chỉ Read và nó chứa lệnh để thực thi nên tránh sửa đổi instruction.
+
+- Chứa khai báo hằng số trong chương trình (.rodata)
+```
+// Ví dụ : chỉ đọc data
+const int a = 9;
+char *arr = "Hello";
+```
+## Phân vùng Data:
+- Quyền truy cập là read-write.
+
+- Chứa biến toàn cục or biến static với giá trị khởi tạo khác không.
+
+- Được giải phóng khi kết thúc chương trình.
+```
+#include <stdio.h>
+
+int x = 10; // biến toàn cục
+static int a = 15; // biến static toàn cục
+
+void test(){
+ static int b = 10; // biến static cục bộ
+ a = a + 20;
+ prinf("test: %d\n", a);
+}
+int main (){
+
+ test();
+ a = a +15;
+ prinf("main: %d\n", a);
+ return 0;
+ // Result: test = 35, main = 50
+```
+## Phân vùng BSS:
+- Quyền truy cập là read-write.
+
+- Chứa biến toàn cục or biến static với giá trị khởi tạo bằng không or không khởi tạo.
+
+- Được giải phóng khi kết thúc chương trình.
+```
+static int a ; // biến static toàn cục phân vùng bss
+/* khi giá trị được khởi tạo vd: a = 10 thì nó vẫn ở phân vùng bss */ 
+void test(){
+ static int b ; // biến static cục bộ
+}
+int main (){
+}
+```
+## Phân vùng Stack:
+- Quyền truy cập là read-write.
+
+- Được sử dụng cấp phát cho biến local, input parameter của hàm,…
+
+- Sẽ được giải phóng khi ra khỏi block code/hàm.
+```
+// int a, int b là input parameter
+int sum(int a, int b){
+  int c; // biến cục bộ ở phân vùng stack
+  c = a + b;
+  return c;
+}
+```
+## Phân vùng Heap:
+- Quyền truy cập là read-write.
+
+- Được sử dụng để cấp phát bộ nhớ động như: Malloc, Calloc,…
+
+- Sẽ được giải phóng khi gọi hàm free,…
+```
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+void test1(){
+  char arr[3]; // biến toàn cục
+  printf("Dia chi arr: %p\n", arr);
+}
+
+void test2(){
+/*
+ Khi khai báo kiểu malloc, các ô nhớ sẽ được giữ nguyên bộ nhớ ban đầu (draf data hay dữ liệu rác).
+ Kiểu trả về là con trỏ void (không có giá trị), tham số truyền vào là  size tính bằng byte.
+ Vì hàm malloc trả về dạng void, vậy ta cần ép kiểu cho nó trở về đúng kiểu con trỏ mà ta sử dụng.
+ Vì char có 1 byte nên khai báo sẽ được cấp 3 byte tương ứng 3 phần tử.
+*/
+  char *arr = (char*)malloc(sizeof(char)*3);
+  // arr = (char*)realloc(arr,(sizeof(char)*5) // thay đổi kích thước mảng 5 byte tương ứng 5 phần tử
+  printf("Dia chi arr: %p\n", arr);
+  free(arr);
+}
+
+int main(){
+  test1();
+  test1();
+  test2();
+  test2();
+}
+/*
+Result: khi chưa sử dụng lệnh free cho hàm malloc
+Dia chi arr: 0061FF0D : khi gọi test1 lần 1 sau khởi tạo xong nó sẽ thoát ra và thu hồi vùng nhớ 
+Dia chi arr: 0061FF0D : khi gọi test1 lần 2 nó khởi tạo địa chỉ trước đó vì địa chỉ đó vẫn còn trống.
+Dia chi arr: 00BA2F20 : do malloc được lưu ở phân vùng Heap nên nó không thể tự thu hồi 
+Dia chi arr: 00BA2F30
+
+Result: khi sử dụng lệnh free cho hàm malloc
+Dia chi arr: 0061FF0D
+Dia chi arr: 0061FF0D
+Dia chi arr: 00AD2F20
+Dia chi arr: 00AD2F20
+*/
+```
+## Sự khác nhau giữa bộ nhớ Heap và bộ nhớ Stack :
+- Bộ nhớ Heap và bộ nhớ Stack bản chất đều cùng là vùng nhớ được tạo ra và lưu trữ trong RAM khi chương trình được thực thi.
+- Bộ nhớ Stack được dùng để lưu trữ các biến cục bộ trong hàm, tham số truyền vào... Truy cập vào bộ nhớ này rất nhanh và được thực thi khi chương trình được biên dịch
+- Vùng nhớ Stack được quản lý bởi hệ điều hành, dữ liệu được lưu trong Stack sẽ tự động hủy khi hàm thực hiện xong công việc của mình.
+- Bộ nhớ Heap được dùng để lưu trữ vùng nhớ cho những biến con trỏ được cấp phát động bởi các hàm malloc - calloc - realloc (trong C).
+- Nếu bạn liên tục cấp phát vùng nhớ mà không giải phóng thì sẽ bị lỗi tràn vùng nhớ Heap (Heap overflow).
+</details>
