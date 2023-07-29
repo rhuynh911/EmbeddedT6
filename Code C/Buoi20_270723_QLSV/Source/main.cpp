@@ -43,8 +43,8 @@ void writeFile() {
     }
 
     for (const auto& student : studentList) {
-        file << student.id << " " << student.name << " " << student.gender << " " << student.age
-             << " " << student.mathScore << " " << student.physicsScore << " " << student.chemistryScore << endl;
+        file << student.getId() << " " << student.getName() << " " << student.getGender() << " " << student.getAge()
+             << " " << student.getMathScore() << " " << student.getPhysicsScore() << " " << student.getChemistryScore() << endl;
     }
     file.close();
 }
@@ -95,17 +95,17 @@ void updateStudent() {
     cout << "Nhap ID sinh vien can cap nhap thong tin: ";
     cin >> id;
 
-    auto it = find_if(studentList.begin(), studentList.end(), [&id](const Student& s) { return s.id == id; });
+    auto it = find_if(studentList.begin(), studentList.end(), [&id](const Student& s) { return s.getId() == id; });
 
     if (it != studentList.end()) {
         int choice;
         cout << "Thong tin sinh vien hien tai:" << endl;
-        cout << "Ten: " << it->name << endl;
-        cout << "Tuoi: " << it->age << endl;
-        cout << "Gioi tinh: " << it->gender << endl;
-        cout << "Diem Toan: " << it->mathScore << endl;
-        cout << "Diem Ly: " << it->physicsScore << endl;
-        cout << "Diem Hoa: " << it->chemistryScore << endl;
+        cout << "Ten: " << it->getName() << endl;
+        cout << "Tuoi: " << it->getAge() << endl;
+        cout << "Gioi tinh: " << it->getGender() << endl;
+        cout << "Diem Toan: " << it->getMathScore() << endl;
+        cout << "Diem Ly: " << it->getPhysicsScore() << endl;
+        cout << "Diem Hoa: " << it->getChemistryScore() << endl;
 
         cout << "Ban muon cap nhap thong tin nao?" << endl;
         cout << "1. Ten" << endl;
@@ -123,29 +123,29 @@ void updateStudent() {
             cout << "Nhap ten moi: ";
             string newName;
             getline(cin, newName);
-            it->name = newName;
+            it->setName(newName);
             break;
         }
         case 2: {
             cout << "Nhap tuoi moi: ";
             int newAge;
             cin >> newAge;
-            it->age = newAge;
+            it->setAge(newAge);
             break;
         }
         case 3: {
             cout << "Nhap gioi tinh moi (M/F): ";
             char newGender;
             cin >> newGender;
-            it->gender = newGender;
+            it->setGender(newGender);
             break;
         }
         case 4: {
             cout << "Nhap diem Toan moi: ";
             double newMath;
             cin >> newMath;
-            it->mathScore = newMath;
-            it->averageScore = (it->mathScore + it->physicsScore + it->chemistryScore) / 3.0;
+            it->setMathScore(newMath);
+            it->calculateAverageScore();
             it->calculateAcademicPerformance();
             break;
         }
@@ -153,8 +153,8 @@ void updateStudent() {
             cout << "Nhap diem Ly moi: ";
             double newPhysics;
             cin >> newPhysics;
-            it->physicsScore = newPhysics;
-            it->averageScore = (it->mathScore + it->physicsScore + it->chemistryScore) / 3.0;
+            it->setPhysicsScore(newPhysics);
+            it->calculateAverageScore();
             it->calculateAcademicPerformance();
             break;
         }
@@ -162,8 +162,8 @@ void updateStudent() {
             cout << "Nhap diem Hoa moi: ";
             double newChemistry;
             cin >> newChemistry;
-            it->chemistryScore = newChemistry;
-            it->averageScore = (it->mathScore + it->physicsScore + it->chemistryScore) / 3.0;
+            it->setChemistryScore(newChemistry);
+            it->calculateAverageScore();
             it->calculateAcademicPerformance();
             break;
         }
@@ -182,7 +182,7 @@ void deleteStudent() {
     cout << "Nhap ID sinh vien can xoa: ";
     cin >> id;
 
-    auto it = find_if(studentList.begin(), studentList.end(), [&id](const Student& s) { return s.id == id; });
+    auto it = find_if(studentList.begin(), studentList.end(), [&id](const Student& s) { return s.getId() == id; });
 
     if (it != studentList.end()) {
         studentList.erase(it);
@@ -200,7 +200,7 @@ void searchStudentByName() {
 
     vector<Student> result;
     for (const auto& student : studentList) {
-        if (student.name == name) {
+        if (student.getName() == name) {
             result.push_back(student);
         }
     }
@@ -210,27 +210,27 @@ void searchStudentByName() {
     } else {
         cout << "Ket qua tim kiem:" << endl;
         for (const auto& student : result) {
-            cout << "ID: " << student.id << ", Ten: " << student.name << ", Gioi tinh: " << student.gender
-                 << ", Tuoi: " << student.age << ", Diem Trung binh: " << student.averageScore
-                 << ", Hoc luc: " << student.academicPerformance << endl;
+            cout << "ID: " << student.getId() << ", Ten: " << student.getName() << ", Gioi tinh: " << student.getGender()
+                 << ", Tuoi: " << student.getAge() << ", Diem Trung binh: " << student.getAverageScore()
+                 << ", Hoc luc: " << student.getAcademicPerformance() << endl;
         }
     }
 }
 
 bool compareByAverageScore(const Student& s1, const Student& s2) {
-    return s1.averageScore > s2.averageScore;
+    return s1.getAverageScore() > s2.getAverageScore();
 }
 
 bool compareByName(const Student& s1, const Student& s2) {
-    return s1.name < s2.name;
+    return s1.getName() < s2.getName();
 }
 
 void sortByGPA() {
     sort(studentList.begin(), studentList.end(), compareByAverageScore);
     cout << "Danh sach sinh vien sau khi sap xep theo diem trung binh (GPA):" << endl;
     for (const auto& student : studentList) {
-        cout << "ID: " << student.id << ", Ten: " << student.name << ", Diem Trung binh: " << student.averageScore
-             << ", Hoc luc: " << student.academicPerformance << endl;
+        cout << "ID: " << student.getId() << ", Ten: " << student.getName() << ", Diem Trung binh: " << student.getAverageScore()
+             << ", Hoc luc: " << student.getAcademicPerformance() << endl;
     }
 }
 
@@ -238,17 +238,17 @@ void sortByName() {
     sort(studentList.begin(), studentList.end(), compareByName);
     cout << "Danh sach sinh vien sau khi sap xep theo ten:" << endl;
     for (const auto& student : studentList) {
-        cout << "ID: " << student.id << ", Ten: " << student.name << ", Diem Trung binh: " << student.averageScore
-             << ", Hoc luc: " << student.academicPerformance << endl;
+        cout << "ID: " << student.getId() << ", Ten: " << student.getName() << ", Diem Trung binh: " << student.getAverageScore()
+             << ", Hoc luc: " << student.getAcademicPerformance() << endl;
     }
 }
 
 void displayStudentList() {
     cout << "Danh sach sinh vien:" << endl;
     for (const auto& student : studentList) {
-        cout << "ID: " << student.id << ", Ten: " << student.name << ", Gioi tinh: " << student.gender
-             << ", Tuoi: " << student.age << ", Diem Trung binh: " << student.averageScore
-             << ", Hoc luc: " << student.academicPerformance << endl;
+        cout << "ID: " << student.getId() << ", Ten: " << student.getName() << ", Gioi tinh: " << student.getGender()
+             << ", Tuoi: " << student.getAge() << ", Diem Trung binh: " << student.getAverageScore()
+             << ", Hoc luc: " << student.getAcademicPerformance() << endl;
     }
 }
 
