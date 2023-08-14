@@ -9,6 +9,8 @@
 #include <vector>
 #include <map>
 
+using namespace std;
+
 class HotelManager {
 public:
     HotelManager();
@@ -17,6 +19,9 @@ public:
     void showEmployeeList() const;
     void showServiceList() const;
     void bookRoom(const Customer& customer, int roomNumber);
+    void releaseRoom(const Customer& customer, int roomNumber);
+    void bookService(const Customer& customer, const std::string& srvName);
+    void releaseService(const Customer& customer, const std::string& srvName);
     void addCustomer(const Customer& customer);
     void editCustomer(const Customer& customer);
     void deleteCustomer(const Customer& customer);
@@ -26,7 +31,7 @@ public:
     void addService(const Service& service);
     void editService(const Service& service);
     void deleteService(const Service& service);
-    void makePayment(const Customer& customer, double amount);
+    void makePayment(const Customer& customer);
     void showReportsAndStatistics() const;
     void sendNotification(const Customer& customer, const std::string& message);
     void addReview(const Customer& customer, const std::string& review);
@@ -50,6 +55,10 @@ public:
     // Getter and Setter for bookedRooms
     const std::map<int, Customer>& getBookedRooms() const;
     void setBookedRooms(const std::map<int, Customer>& bookedRooms);
+
+    // Getter and Setter for bookedService
+    const std::map<string, Customer>& getBookedServices() const;
+    void setBookedServices(const std::map<string, Customer>& bookedServices);
     
 private:
     std::vector<Room> rooms;
@@ -57,6 +66,7 @@ private:
     std::vector<Employee> employees;
     std::vector<Service> services;
     std::map<int, Customer> bookedRooms;
+    std::map<string, Customer> bookedServices;
 };
 
 #endif
