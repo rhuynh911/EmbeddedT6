@@ -2,13 +2,13 @@
 #include "HotelManager.hpp"
 
 void displayMenu() {
-    std::cout << "Hotel Management System Menu:" << std::endl;
+    std::cout << "\nHotel Management System Menu:" << std::endl;
     std::cout << "1. Book a room" << std::endl;
-    std::cout << "2. Check out" << std::endl;
-    std::cout << "3. Show available rooms" << std::endl;
-    std::cout << "4. Show booked rooms" << std::endl;
-    std::cout << "5. Show reports and statistics" << std::endl;
-    std::cout << "6. Show customer list" << std::endl;
+    std::cout << "2. Book a service" << std::endl;
+    std::cout << "3. Check out" << std::endl;
+    std::cout << "4. Show rooms status" << std::endl;
+    std::cout << "5. Show customer list" << std::endl;
+    std::cout << "6. Show reports and statistics" << std::endl;
     std::cout << "0. Exit" << std::endl;
 }
 
@@ -35,33 +35,35 @@ int main() {
                 break;
             }
             case 2: {
-                // Check out
+                // Book a service
                 // ...
-                hotel.makePayment(f1, 20);
+                hotel.bookService(f1, "Restaurant");
                 break;
             }
             case 3: {
-                // Show available rooms
+                // Check out
                 // ...
-                hotel.showRoomStatus();
+                hotel.makePayment(f1);
+                hotel.releaseRoom(f1, r1.getNumber());
+                hotel.releaseService(f1, "Restaurant");
                 break;
             }
             case 4: {
-                // Show booked rooms
+                // Show rooms status
                 // ...
                 hotel.showRoomStatus();
                 break;
             }
             case 5: {
-                // Show reports and statistics
-                // ...
-                hotel.showReportsAndStatistics();
-                break;
-            }
-            case 6: {
                 // Show customer list
                 // ...
                 hotel.showCustomerList();
+                break;
+            }
+            case 6: {
+                // Show reports and statistics
+                // ...
+                hotel.showReportsAndStatistics();
                 break;
             }
             case 0: {

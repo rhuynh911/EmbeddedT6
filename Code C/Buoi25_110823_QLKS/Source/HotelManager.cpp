@@ -75,15 +75,65 @@ void HotelManager::showServiceList() const {
 }
 
 void HotelManager::bookRoom(const Customer& customer, int roomNumber) {
+    bool found = false;
     for (Room& room : rooms) {
         if (room.getNumber() == roomNumber && (room.getStatus() != Room::Status::Booked) && (room.getStatus() != Room::Status::Cleaning)) {
-            // Room can be booked, update the room status and add to bookedRooms
+            found = true;
             room.setStatus(Room::Status::Booked);
             bookedRooms.insert(std::make_pair(roomNumber, customer));
             std::cout << "Room " << roomNumber << " has been booked by " << customer.getName() << "." << std::endl;
+            break;
         }
     }
-    std::cout << "Room " << roomNumber << " is not available for booking." << std::endl;
+    if(found == false){
+        std::cout << "Room " << roomNumber << " is not available for booking." << std::endl;
+    }
+}
+
+void HotelManager::releaseRoom(const Customer& customer, int roomNumber) {
+    bool found = false;
+    for (Room& room : rooms) {
+        if (room.getNumber() == roomNumber && (room.getStatus() == Room::Status::Booked) && (room.getStatus() != Room::Status::Cleaning)) {
+            found = true;
+            room.setStatus(Room::Status::Available);
+            bookedRooms.erase(roomNumber);
+            std::cout << "Room " << roomNumber << " has been released by " << customer.getName() << "." << std::endl;
+            break;
+        }
+    }
+    if(found == false){
+        std::cout << "Room " << roomNumber << " is not available for releasing." << std::endl;
+    }
+}
+
+void HotelManager::bookService(const Customer& customer, const std::string& srvName) {
+    bool found = false;
+    for(Service& service : services){
+        if(service.getName() == srvName){
+            found = true;
+            bookedServices.insert(make_pair(srvName, customer));
+            std::cout << "Service " << srvName << " has been booked by " << customer.getName() << "." << std::endl;
+            break;
+        }
+    }
+    if(found == false){
+        std::cout << "Service " << srvName << " is not available for booking." << std::endl;
+    }
+}
+
+void HotelManager::releaseService(const Customer& customer, const std::string& srvName) {
+    bool found = false;
+    for(Service& service : services){
+        if(service.getName() == srvName){
+            found = true;
+            bookedServices.erase(srvName);
+            std::cout << "Service " << srvName << " has been release by " << customer.getName() << "." << std::endl;
+            break;
+        }
+    }
+    if(found == false){
+        std::cout << "Service " << srvName << " is not available for booking." << std::endl;
+    }
 }
 
 void HotelManager::addCustomer(const Customer& customer) {
@@ -167,10 +217,22 @@ void HotelManager::deleteService(const Service& service) {
     std::cout << "Service not found." << std::endl;
 }
 
-void HotelManager::makePayment(const Customer& customer, double amount) {
+void HotelManager::makePayment(const Customer& customer) {
     // Implement code to process payment
     // For demonstration purposes, let's just print a message
-    std::cout << "Payment of $" << amount << " made by " << customer.getName() << std::endl;
+    //std::cout << "Payment of $" << amount << " made by " << customer.getName() << std::endl;
+    double totalPriceHasToPay = 0.0;
+    for (auto it = bookedRooms.begin(); it != bookedRooms.end(); ++it) {
+        for (auto it2 = bookedServices.begin(); it2 != bookedServices.end(); ++it2) {
+            for (const Service& service : services) {
+                if(service.getName() == it2->first){
+                    totalPriceHasToPay += service.getPrice();
+                }
+            }
+        }
+    }
+    cout << "Payment of $" << totalPriceHasToPay << " made by " << customer.getName() << std::endl;
+
 }
 
 
@@ -178,6 +240,23 @@ void HotelManager::showReportsAndStatistics() const {
     // Implement code to display reports and statistics
     // For demonstration purposes, let's just print a message
     std::cout << "Displaying reports and statistics..." << std::endl;
+    cout<< "==========================================================" << endl;
+    cout << "Room \t" << "Customer\t" << "Services\t" << "Cost" << endl;
+    cout<< "==========================================================" << endl;
+
+    for (auto it = bookedRooms.begin(); it != bookedRooms.end(); ++it) {
+        std::cout << it->first << "\t" << it->second.getName() ;
+        for (auto it2 = bookedServices.begin(); it2 != bookedServices.end(); ++it2) {
+            if(it->second.getName() == it2->second.getName()){
+                cout << "\t" << it2->first;
+            }
+            for (const Service& service : services) {
+                if(service.getName() == it2->first){
+                    cout << "\t" << service.getPrice() << endl;
+                }
+            }
+        }
+    }
 }
 
 void HotelManager::sendNotification(const Customer& customer, const std::string& message) {
@@ -235,4 +314,13 @@ const std::map<int, Customer>& HotelManager::getBookedRooms() const {
 
 void HotelManager::setBookedRooms(const std::map<int, Customer>& bookedRooms) {
     this->bookedRooms = bookedRooms;
+}
+
+// Getter and Setter for bookedService
+const std::map<string, Customer>& HotelManager::getBookedServices() const {
+    return bookedServices;
+}
+
+void HotelManager::setBookedServices(const std::map<string, Customer>& bookedServices) {
+    this->bookedServices = bookedServices;
 }
